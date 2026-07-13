@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const emailLogin = document.getElementById("emailLogin");
   const senhaLogin = document.getElementById("senhaLogin");
   const btnEntrar = document.getElementById("btnEntrar");
-  const btnSair = document.getElementById("btnSair");
   const msgLogin = document.getElementById("msgLogin");
 
   async function atualizarTela() {
@@ -15,80 +14,85 @@ document.addEventListener("DOMContentLoaded", async () => {
     } = await window.supabaseClient.auth.getSession();
 
     if (error) {
+      console.error(error);
       msgLogin.textContent = "Erro ao verificar sessão.";
       return;
     }
 
-    if (session) {
-  const { data: usuario, error: usuarioError } = await window.supabaseClient
-    .from("usuarios")
-    .select("nome, email, matricula, perfil, status")
-    .eq("id", session.user.id)
-    .single();
-
-  if (usuarioError) {
-    msgLogin.textContent = "Erro ao carregar o perfil do usuário.";
-    await window.supabaseClient.auth.signOut();
-    loginBox.style.display = "block";
-    app.style.display = "none";
-    return;
-  }
-
-  if (usuario.status !== "ATIVO") {
-    msgLogin.textContent = "Usuário inativo.";
-    await window.supabaseClient.auth.signOut();
-    loginBox.style.display = "block";
-    app.style.display = "none";
-    return;
-  }
-
-  window.usuarioAtual = usuario;
-
-  document.querySelector("#app h1").textContent =
-    `Central CCO V3 — ${usuario.nome}`;
-
-  document.querySelector("#app p").textContent =
-    `Perfil: ${usuario.perfil}`;
-
-  loginBox.style.display = "none";
-app.style.display = "block";
-
-window.dashboard.iniciar();
-} else {
+    if (!session) {
       loginBox.style.display = "block";
       app.style.display = "none";
-    }
-  }
-
-  formLogin.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    msgLogin.textContent = "";
-    btnEntrar.disabled = true;
-    btnEntrar.textContent = "Entrando...";
-
-    const { error } = await window.supabaseClient.auth.signInWithPassword({
-      email: emailLogin.value.trim(),
-      password: senhaLogin.value
-    });
-
-    if (error) {
-      msgLogin.textContent = "E-mail ou senha inválidos.";
-      btnEntrar.disabled = false;
-      btnEntrar.textContent = "Entrar";
       return;
     }
 
-    await atualizarTela();
+    const { data: usuario, error: usuarioError } =
+      await window.supabaseClient
+        .from("usuarios")
+        .select("nome, email, matricula, perfil, status")
+        .eq("id", session.user.id)
+        .single();
 
-    btnEntrar.disabled = false;
-    btnEntrar.textContent = "Entrar";
-  });
+    if (usuarioError || !usuario) {
+      console.error(usuarioError);
+      await window.supabaseClient.auth.signOut();
 
-  btnSair.addEventListener("click", async () => {
-    await window.supabaseClient.auth.signOut();
-    await atualizarTela();
-  });
+      msgLogin.textContent = "Erro ao carregar o perfil do usuário.";
+      loginBox.style.display = "block";
+      app.style.display = "none";
+      return;
+    }
+
+    if (usuario.status !== "ATIVO") {
+      await window.supabaseClient.auth.signOut();
+
+      msgLogin.textContent = "Usuário inativo.";
+      loginBox.style.display = "block";
+      app.style.display = "none";
+      return;
+    }
+
+    window.usuarioAtual = usuario;
+
+    loginBox.style.display = "none";
+    app.style.display = "block";
+
+    if (
+      window.dashboard &&
+      typeof window.dashboard.iniciar === "function"
+    ) {
+      window.dashboard.iniciar();
+    } else {
+      console.error("Dashboard não foi carregado.");
+    }
+  }
+
+  if (formLogin) {
+    formLogin.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      msgLogin.textContent = "";
+      btnEntrar.disabled = true;
+      btnEntrar.textContent = "Entrando...";
+
+      const { error } =
+        await window.supabaseClient.auth.signInWithPassword({
+          email: emailLogin.value.trim(),
+          password: senhaLogin.value
+        });
+
+      if (error) {
+        msgLogin.textContent = "E-mail ou senha inválidos.";
+        btnEntrar.disabled = false;
+        btnEntrar.textContent = "Entrar";
+        return;
+      }
+
+      btnEntrar.disabled = false;
+      btnEntrar.textContent = "Entrar";
+
+      await atualizarTela();
+    });
+  }
 
   window.supabaseClient.auth.onAuthStateChange(() => {
     atualizarTela();
