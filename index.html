@@ -1,90 +1,14 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<script src="./js/supabase.js?v=1"></script>
+<script src="./js/auth.js?v=1"></script>
+<script src="./js/api.js?v=1"></script>
 
-  <title>Central de Acessos CCO</title>
+<script src="./js/ui.js?v=1"></script>
+<script src="./js/dashboard.js?v=1"></script>
+<script src="./js/servicos.js?v=1"></script>
+<script src="./js/procedimentos.js?v=1"></script>
 
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
-  >
-
-  <link rel="stylesheet" href="./css/style.css?v=1">
-</head>
-
-<body>
-
-  <main id="login" class="login-box">
-
-    <div class="logo-login">
-      <span class="material-symbols-rounded">train</span>
-    </div>
-
-    <h1>Central de Acessos CCO</h1>
-
-    <p>Acesso autorizado</p>
-
-    <form id="formLogin">
-
-      <label for="emailLogin">E-mail corporativo</label>
-
-      <input
-        type="email"
-        id="emailLogin"
-        autocomplete="username"
-        placeholder="nome@triviatrens.com.br"
-        required
-      >
-
-      <label for="senhaLogin">Senha</label>
-
-      <input
-        type="password"
-        id="senhaLogin"
-        autocomplete="current-password"
-        placeholder="Digite sua senha"
-        required
-      >
-
-      <button id="btnEntrar" type="submit">
-        Entrar
-      </button>
-
-    </form>
-
-    <button
-      id="btnEsqueciSenha"
-      type="button"
-      class="btn-recuperar"
-    >
-      Esqueci minha senha
-    </button>
-
-    <div id="msgLogin" class="mensagem-login"></div>
-
-  </main>
-
-  <section id="app" style="display:none;">
-    <h1>Central CCO V3</h1>
-    <p>Login realizado com sucesso.</p>
-
-    <button id="btnSair" type="button">
-      Sair
-    </button>
-  </section>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script src="./js/supabase.js?v=1"></script>
-  <script src="./js/auth.js?v=1"></script>
-  <script src="./js/api.js?v=1"></script>
-  <script src="./js/app.js?v=5"></script>
-
+<script src="./js/app.js?v=6"></script>
 </body>
 </html>
