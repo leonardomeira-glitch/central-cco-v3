@@ -51,7 +51,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     `Perfil: ${usuario.perfil}`;
 
   loginBox.style.display = "none";
-  app.style.display = "block";
+app.style.display = "block";
+
+dashboard.iniciar();
 } else {
       loginBox.style.display = "block";
       app.style.display = "none";
