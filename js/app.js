@@ -20,9 +20,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (session) {
-      loginBox.style.display = "none";
-      app.style.display = "block";
-    } else {
+  const { data: usuario, error: usuarioError } = await window.supabaseClient
+    .from("usuarios")
+    .select("nome, email, matricula, perfil, status")
+    .eq("id", session.user.id)
+    .single();
+
+  if (usuarioError) {
+    msgLogin.textContent = "Erro ao carregar o perfil do usuário.";
+    await window.supabaseClient.auth.signOut();
+    loginBox.style.display = "block";
+    app.style.display = "none";
+    return;
+  }
+
+  if (usuario.status !== "ATIVO") {
+    msgLogin.textContent = "Usuário inativo.";
+    await window.supabaseClient.auth.signOut();
+    loginBox.style.display = "block";
+    app.style.display = "none";
+    return;
+  }
+
+  window.usuarioAtual = usuario;
+
+  document.querySelector("#app h1").textContent =
+    `Central CCO V3 — ${usuario.nome}`;
+
+  document.querySelector("#app p").textContent =
+    `Perfil: ${usuario.perfil}`;
+
+  loginBox.style.display = "none";
+  app.style.display = "block";
+} else {
       loginBox.style.display = "block";
       app.style.display = "none";
     }
