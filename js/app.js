@@ -1,19 +1,28 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  console.log("Central CCO V3 iniciada.");
 
-    console.log("Central CCO V3 iniciada.");
+  const { data, error } = await window.supabaseClient.auth.getSession();
 
-    const { data: sessionData } = await window.supabaseClient.auth.getSession();
+  if (error) {
+    console.error("Erro ao verificar sessão:", error);
+    return;
+  }
 
-    console.log("Sessão:", sessionData);
+  if (!data.session) {
+    console.log("Usuário ainda não está logado.");
+    return;
+  }
 
-    const { data, error } = await window.supabaseClient
-        .from("usuarios")
-        .select("*");
+  const { data: usuario, error: usuarioError } = await window.supabaseClient
+    .from("usuarios")
+    .select("id, email, nome, matricula, perfil, status")
+    .eq("id", data.session.user.id)
+    .single();
 
-    console.log("Usuários:", data);
+  if (usuarioError) {
+    console.error("Erro ao carregar usuário:", usuarioError);
+    return;
+  }
 
-    if (error) {
-        console.error(error);
-    }
-
+  console.log("Usuário conectado:", usuario);
 });
