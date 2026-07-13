@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   loginBox.style.display = "none";
 app.style.display = "block";
 
-dashboard.iniciar();
+window.dashboard.iniciar();
 } else {
       loginBox.style.display = "block";
       app.style.display = "none";
